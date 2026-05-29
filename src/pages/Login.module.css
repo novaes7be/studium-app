@@ -21,7 +21,7 @@
 .logo {
   font-family: var(--font-display);
   font-size: 20px;
-  background: linear-gradient(135deg, var(--violet), var(--pink));
+  background: linear-gradient(135deg, var(--accent), var(--pink));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 32px;
@@ -58,8 +58,8 @@
 }
 
 .input:focus {
-  border-color: var(--violet);
-  box-shadow: 0 0 0 3px #8757BA18;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 .input::placeholder { color: var(--muted); }
@@ -74,18 +74,18 @@
   width: 100%;
   padding: 14px;
   border-radius: var(--r-full);
-  background: linear-gradient(135deg, var(--violet), var(--pink));
+  background: linear-gradient(135deg, var(--accent), var(--pink));
   color: white;
   font-size: 14px;
   font-weight: 500;
   transition: all 0.25s;
-  box-shadow: 0 0 32px #8757BA33;
+  box-shadow: 0 0 32px color-mix(in srgb, var(--accent) 20%, transparent);
   margin-top: 8px;
 }
 
 .btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 0 48px #8757BA55;
+  box-shadow: 0 0 48px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 .btn:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -98,6 +98,17 @@
   line-height: 1.6;
 }
 
+.link {
+  background: transparent;
+  color: var(--accent);
+  font-size: 12px;
+  font-family: var(--font-body);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.link:hover { opacity: 0.75; }
+
 .success {
   text-align: center;
   animation: fadeIn 0.4s ease both;
@@ -105,7 +116,7 @@
 
 .successIcon {
   font-size: 32px;
-  background: linear-gradient(135deg, var(--violet), var(--lavender));
+  background: linear-gradient(135deg, var(--accent), var(--lavender));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 16px;
@@ -136,4 +147,16 @@
   transition: all 0.2s;
 }
 
-.btnGhost:hover { border-color: var(--violet); color: var(--text); }
+.btnGhost:hover { border-color: var(--accent); color: var(--text); }
+
+.warning {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-radius: var(--r-md);
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+}
