@@ -1,0 +1,139 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 420px;
+  animation: fadeUp 0.5s ease both;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 20px;
+  background: linear-gradient(135deg, var(--violet), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.sub {
+  color: var(--text-secondary);
+  font-weight: 300;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+.input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  color: var(--text);
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px #8757BA18;
+}
+
+.input::placeholder { color: var(--muted); }
+
+.error {
+  color: var(--pink);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--r-full);
+  background: linear-gradient(135deg, var(--violet), var(--pink));
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.25s;
+  box-shadow: 0 0 32px #8757BA33;
+  margin-top: 8px;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 48px #8757BA55;
+}
+
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.hint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 16px;
+  line-height: 1.6;
+}
+
+.success {
+  text-align: center;
+  animation: fadeIn 0.4s ease both;
+}
+
+.successIcon {
+  font-size: 32px;
+  background: linear-gradient(135deg, var(--violet), var(--lavender));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 16px;
+}
+
+.success h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.success p {
+  color: var(--text-secondary);
+  font-weight: 300;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.success strong { color: var(--text); font-weight: 500; }
+
+.btnGhost {
+  padding: 10px 24px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-hover);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.btnGhost:hover { border-color: var(--violet); color: var(--text); }

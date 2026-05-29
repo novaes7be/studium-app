@@ -1,0 +1,97 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: #00000066;
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  width: 100%;
+  max-width: 360px;
+  animation: fadeUp 0.25s ease;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 18px;
+}
+
+.closeBtn {
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  background: var(--surface2);
+  color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.closeBtn:hover { color: var(--text); }
+
+.input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 14px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+  font-family: var(--font-body);
+}
+.input:focus { border-color: var(--violet); }
+.input::placeholder { color: var(--muted); }
+
+.colorLabel {
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.colors {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.swatch {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.swatch:hover { transform: scale(1.15); }
+.swatchActive { border-color: var(--text) !important; transform: scale(1.1); }
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--r-full);
+  background: linear-gradient(135deg, var(--violet), var(--pink));
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+.btn:hover:not(:disabled) { opacity: 0.9; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
