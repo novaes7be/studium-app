@@ -4,8 +4,14 @@ import { X, Sparkles, Loader, Clock, CheckCircle, XCircle, ChevronRight, RotateC
 import { supabase } from '../lib/supabase'
 import { useApp } from '../context/AppContext'
 
-const QUIZ_SYSTEM_PROMPT = (pdfName) => `Você é um gerador de questionários acadêmicos para o documento "${pdfName}".
-Gere exatamente o número de questões solicitado, baseadas SOMENTE no conteúdo do documento.
+const QUIZ_SYSTEM_PROMPT = (pdfName, pdfText) => `Você é um gerador de questionários acadêmicos para o documento "${pdfName}".
+
+Conteúdo do documento:
+"""
+${pdfText ? pdfText.slice(0, 12000) : 'Conteúdo não disponível.'}
+"""
+
+Gere exatamente o número de questões solicitado, baseadas SOMENTE no conteúdo acima.
 Responda APENAS com JSON válido, sem texto antes ou depois, sem markdown, sem blocos de código.
 O JSON deve seguir EXATAMENTE este formato:
 {
@@ -20,7 +26,7 @@ O JSON deve seguir EXATAMENTE este formato:
 }
 As options devem conter APENAS o texto da opção, sem explicações. A explanation é um campo separado.`
 
-export default function QuizModal({ pdf, onClose }) {
+export default function QuizModal({ pdf, pdfText = '', pdfTextLoading = false, onClose }) {
   const { user } = useApp()
   const [step, setStep] = useState('config')
   const [config, setConfig] = useState({ questions: 5, timerMode: 'total', timePerQuestion: 60, totalTime: 300 })
@@ -64,10 +70,10 @@ export default function QuizModal({ pdf, onClose }) {
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
+          model: 'llama-3.3-70b-versatile',
           max_tokens: 2000,
           json_mode: true,
-          system: QUIZ_SYSTEM_PROMPT(pdf.name),
+          system: QUIZ_SYSTEM_PROMPT(pdf.name, pdfText),
           messages: [{
             role: 'user',
             content: `Gere ${config.questions} questões de múltipla escolha sobre o documento "${pdf.name}". Varie entre fácil, médio e difícil.`
@@ -141,6 +147,10 @@ export default function QuizModal({ pdf, onClose }) {
 
             {error && <div className={styles.error}>{error}</div>}
 
+            {!pdfText && (
+              <div className={styles.error}>⚠ Abra o PDF antes de gerar o quiz para que a IA leia o conteúdo.</div>
+            )}
+
             <div className={styles.configSection}>
               <label className={styles.configLabel}>Número de questões</label>
               <div className={styles.optionRow}>
@@ -202,7 +212,7 @@ export default function QuizModal({ pdf, onClose }) {
               </div>
             )}
 
-            <button className={styles.generateBtn} onClick={generateQuiz}>
+            <button className={styles.generateBtn} onClick={generateQuiz} disabled={!pdfText || pdfTextLoading}>
               <Sparkles size={14} /><span>Gerar questões com IA</span>
             </button>
           </>

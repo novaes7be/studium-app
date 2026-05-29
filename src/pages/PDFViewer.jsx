@@ -3,13 +3,21 @@ import { supabase } from '../lib/supabase'
 import { useApp } from '../context/AppContext'
 import styles from './PDFViewer.module.css'
 import { X, Sparkles, StickyNote, Send, Loader, Plus, Trash2 } from 'lucide-react'
+import * as pdfjsLib from 'pdfjs-dist'
 
-const PDF_SYSTEM_PROMPT = (pdfName) => `Você é um assistente de estudos especializado, focado exclusivamente no documento "${pdfName}".
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`
+
+const PDF_SYSTEM_PROMPT = (pdfName, pdfText) => `Você é um assistente de estudos especializado, focado exclusivamente no documento "${pdfName}".
+
+Conteúdo do documento:
+"""
+${pdfText ? pdfText.slice(0, 12000) : 'Conteúdo não disponível.'}
+"""
 
 Regras que você DEVE seguir:
-- Responda APENAS sobre o conteúdo do documento em questão
+- Responda APENAS sobre o conteúdo do documento acima
 - Se o usuário perguntar algo fora do escopo do documento, redirecione educadamente para o conteúdo do PDF
-- Única exceção: se o usuário pedir dicas de como estudar, organizar revisões ou técnicas de aprendizado relacionadas ao tema do documento, você pode responder
+- Única exceção: dicas de como estudar ou técnicas de aprendizado relacionadas ao tema do documento
 - Sempre responda em português, de forma clara e objetiva
 - Ao resumir, use tópicos e destaque os pontos mais importantes
 - Nunca invente informações que não estejam no documento`
@@ -17,6 +25,7 @@ Regras que você DEVE seguir:
 export default function PDFViewer({ pdf, defaultPanel = 'notes', onClose }) {
   const { user } = useApp()
   const [pdfUrl, setPdfUrl] = useState(null)
+  const [pdfText, setPdfText] = useState('')
   const [panel, setPanel] = useState(defaultPanel)
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('')
@@ -31,7 +40,27 @@ export default function PDFViewer({ pdf, defaultPanel = 'notes', onClose }) {
 
   const loadPdfUrl = async () => {
     const { data } = await supabase.storage.from('pdfs').createSignedUrl(pdf.storage_path, 3600)
-    if (data) setPdfUrl(data.signedUrl)
+    if (data) {
+      setPdfUrl(data.signedUrl)
+      extractPdfText(data.signedUrl)
+    }
+  }
+
+  const extractPdfText = async (url) => {
+    try {
+      const loadingTask = pdfjsLib.getDocument(url)
+      const doc = await loadingTask.promise
+      let text = ''
+      const maxPages = Math.min(doc.numPages, 30) // limita a 30 páginas
+      for (let i = 1; i <= maxPages; i++) {
+        const page = await doc.getPage(i)
+        const content = await page.getTextContent()
+        text += content.items.map(item => item.str).join(' ') + '\n'
+      }
+      setPdfText(text)
+    } catch (e) {
+      console.error('Erro ao extrair texto do PDF:', e)
+    }
   }
 
   const loadNotes = async () => {
@@ -60,16 +89,16 @@ export default function PDFViewer({ pdf, defaultPanel = 'notes', onClose }) {
     try {
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-proxy`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-         },
+        },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          json_mode: true,  
-          system: PDF_SYSTEM_PROMPT(pdf.name),
+          model: 'llama-3.3-70b-versatile',
+          max_tokens: 1500,
+          system: PDF_SYSTEM_PROMPT(pdf.name, pdfText),
           messages: newMessages,
+          // sem json_mode aqui — resposta em texto livre
         }),
       })
       const data = await res.json()
@@ -148,8 +177,12 @@ export default function PDFViewer({ pdf, defaultPanel = 'notes', onClose }) {
             {messages.length === 0 && (
               <div className={styles.aiEmpty}>
                 <Sparkles size={24} className={styles.aiIcon} />
-                <p>Faça perguntas sobre o documento ou gere um resumo.<br /><span className={styles.aiHint}>A IA responde apenas sobre o conteúdo deste PDF.</span></p>
-                <button className={styles.summaryBtn} onClick={generateSummary} disabled={summaryLoading}>
+                <p>Faça perguntas sobre o documento ou gere um resumo.<br />
+                  <span className={styles.aiHint}>
+                    {pdfText ? 'Documento carregado — IA pronta.' : 'Carregando documento...'}
+                  </span>
+                </p>
+                <button className={styles.summaryBtn} onClick={generateSummary} disabled={summaryLoading || !pdfText}>
                   {summaryLoading ? <Loader size={14} className={styles.spin} /> : <Sparkles size={14} />}
                   <span>{summaryLoading ? 'Gerando...' : 'Gerar resumo'}</span>
                 </button>
@@ -178,7 +211,7 @@ export default function PDFViewer({ pdf, defaultPanel = 'notes', onClose }) {
                   onChange={e => setAiInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleSend()}
                 />
-                <button className={styles.sendBtn} onClick={handleSend} disabled={aiLoading}><Send size={14} /></button>
+                <button className={styles.sendBtn} onClick={handleSend} disabled={aiLoading || !pdfText}><Send size={14} /></button>
               </div>
             </div>
           </div>

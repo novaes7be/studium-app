@@ -21,7 +21,8 @@ serve(async (req) => {
     ],
   };
 
-  if (body.json_mode) {
+  // json_mode apenas quando explicitamente solicitado (quiz)
+  if (body.json_mode === true) {
     groqBody.response_format = { type: "json_object" };
   }
 
