@@ -79,6 +79,16 @@ export default function App() {
     setActiveSubject({ ...subject, pdf_count: 0 })
   }
 
+  const handleSubjectRenamed = (updated) => {
+  setSubjects(s => s.map(x => x.id === updated.id ? { ...x, name: updated.name } : x))
+  if (activeSubject?.id === updated.id) setActiveSubject(a => ({ ...a, name: updated.name }))
+  }
+
+  const handleSubjectDeleted = (id) => {
+    setSubjects(s => s.filter(x => x.id !== id))
+    if (activeSubject?.id === id) setActiveSubject(null)
+  }
+
   if (loading) return (
     <div className={styles.loadingScreen}>
       <div className={styles.loadingLogo}>Studium</div>
@@ -94,6 +104,8 @@ export default function App() {
         activeSubject={activeSubject}
         onSelectSubject={setActiveSubject}
         onAddSubject={() => setShowAddSubject(true)}
+        onSubjectRenamed={handleSubjectRenamed}
+        onSubjectDeleted={handleSubjectDeleted}
       />
 
       <main className={styles.main}>

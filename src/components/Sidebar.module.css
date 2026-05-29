@@ -67,6 +67,8 @@
   text-align: left;
   transition: all 0.15s;
   width: 100%;
+  position: relative;
+  cursor: pointer;
 }
 
 .navItem:hover:not(.active) { background: var(--surface2); color: var(--text); }
@@ -77,13 +79,29 @@
   border: 1px solid var(--border-hover);
 }
 
+/* show menu button only on hover */
+.menuBtn {
+  opacity: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 2px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.navItem:hover .menuBtn { opacity: 1; }
+.menuBtn:hover { background: var(--surface3); color: var(--text); }
+
 .dot {
   width: 7px; height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.navLabel { flex: 1; }
+.navLabel { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .navCount {
   font-size: 11px;
@@ -91,7 +109,80 @@
   background: var(--surface3);
   padding: 1px 6px;
   border-radius: var(--r-full);
+  flex-shrink: 0;
 }
+
+/* inline rename input */
+.editInput {
+  flex: 1;
+  background: var(--surface3);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: var(--font-body);
+  padding: 2px 6px;
+  outline: none;
+  min-width: 0;
+}
+
+.editActions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.editConfirm {
+  background: transparent;
+  color: var(--accent);
+  padding: 3px;
+  border-radius: 4px;
+  display: flex;
+  transition: all 0.15s;
+}
+.editConfirm:hover { background: color-mix(in srgb, var(--accent) 15%, transparent); }
+
+.editCancel {
+  background: transparent;
+  color: var(--muted);
+  padding: 3px;
+  border-radius: 4px;
+  display: flex;
+  transition: all 0.15s;
+}
+.editCancel:hover { background: var(--surface3); color: var(--text); }
+
+/* dropdown menu */
+.dropMenu {
+  position: absolute;
+  right: 8px;
+  top: calc(100% + 4px);
+  background: var(--surface);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--r-md);
+  box-shadow: 0 8px 24px #0006;
+  z-index: 100;
+  overflow: hidden;
+  min-width: 130px;
+  animation: fadeIn 0.15s ease;
+}
+
+.dropMenu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  width: 100%;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: var(--font-body);
+  transition: all 0.15s;
+}
+.dropMenu button:hover { background: var(--surface2); color: var(--text); }
+
+.dropDelete { color: var(--pink) !important; }
+.dropDelete:hover { background: color-mix(in srgb, var(--pink) 10%, transparent) !important; }
 
 .empty {
   display: flex;
@@ -213,4 +304,4 @@
   display: flex;
   transition: all 0.15s;
 }
-.logoutBtn:hover { color: var(--pink); background: #FF4A8918; }
+.logoutBtn:hover { color: var(--pink); background: color-mix(in srgb, var(--pink) 10%, transparent); }
