@@ -9,19 +9,16 @@ export function AppProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Theme
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
     localStorage.setItem('theme', theme)
   }, [theme])
 
-  // Accent color (highlight color user can customize)
   useEffect(() => {
     document.documentElement.style.setProperty('--accent', accentColor)
     localStorage.setItem('accent', accentColor)
   }, [accentColor])
 
-  // Auth listener
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
@@ -37,10 +34,16 @@ export function AppProvider({ children }) {
 
   const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark')
 
-  const signInWithEmail = async (email) => {
-    const { error } = await supabase.auth.signInWithOtp({
+  const signInWithPassword = async (email, password) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    return { error }
+  }
+
+  const signUpWithPassword = async (email, password) => {
+    const { error } = await supabase.auth.signUp({
       email,
-      options: { emailRedirectTo: window.location.origin }
+      password,
+      options: { emailRedirectTo: undefined }
     })
     return { error }
   }
@@ -54,7 +57,7 @@ export function AppProvider({ children }) {
       theme, toggleTheme,
       accentColor, setAccentColor,
       user, loading,
-      signInWithEmail, signOut
+      signInWithPassword, signUpWithPassword, signOut
     }}>
       {children}
     </AppContext.Provider>
