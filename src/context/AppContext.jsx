@@ -40,12 +40,18 @@ export function AppProvider({ children }) {
   }
 
   const signUpWithPassword = async (email, password) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: undefined }
-    })
-    return { error }
+  const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/signup-confirm`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+    },
+    body: JSON.stringify({ email, password }),
+  })
+  const data = await res.json()
+  if (data.error) return { error: data.error }
+  // Loga automaticamente após cadastro
+  return await supabase.auth.signInWithPassword({ email, password })
   }
 
   const signOut = async () => {
