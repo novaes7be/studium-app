@@ -10,6 +10,7 @@ import AddSubjectModal from './components/AddSubjectModal'
 import QuizModal from './components/QuizModal'
 import './styles/global.css'
 import styles from './App.module.css'
+import Landing from './pages/Landing'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`
 
@@ -40,6 +41,7 @@ export default function App() {
   const [quizPDF, setQuizPDF] = useState(null)
   const [quizPdfText, setQuizPdfText] = useState('')
   const [quizLoading, setQuizLoading] = useState(false)
+  const [showLogin, setShowLogin] = useState(false)
 
   useEffect(() => {
     if (user) fetchSubjects()
@@ -95,7 +97,7 @@ export default function App() {
     </div>
   )
 
-  if (!user) return <Login />
+  if (!user) return showLogin ? <Login /> : <Landing onEnter={() => setShowLogin(true)} />
 
   return (
     <div className={styles.layout}>
